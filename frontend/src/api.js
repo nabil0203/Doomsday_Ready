@@ -1,9 +1,20 @@
+// Empty locally (the Vite proxy handles /api). On the live site it is the backend's address.
+const BASE = import.meta.env.VITE_API_URL || "";
+
+// Send a request and return the JSON. On an error response, throw its message.
 // Send a request and return the JSON. On an error response, throw its message.
 async function request(url, options) {
-  const response = await fetch(url, options);
-  const data = await response.json();
+  const response = await fetch(BASE + url, options);
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    // the server sent no JSON (empty body or an HTML error page)
+  }
+
   if (!response.ok) {
-    throw new Error(data.message);
+    throw new Error(data ? data.message : `Server error (${response.status})`);
   }
   return data;
 }
