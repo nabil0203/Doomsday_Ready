@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/6.1/ref/settings/
 
 from pathlib import Path
 
+import os
+import dj_database_url
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -20,7 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-5)23&37lx*i@9ktjw*h73%uu=n369(93&6uwq_fwkm^z76=p@9'
+SECRET_KEY = os.environ.get("SECRET_KEY", "paste-your-existing-key-here")
+DEBUG = os.environ.get("DEBUG", "True") == "True"
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -81,12 +86,17 @@ WSGI_APPLICATION = 'doomsday.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if os.environ.get("DATABASE_URL"):
+    # Live: Render gives us one DATABASE_URL for Postgres
+    DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
+else:
+    # Local: SQLite, as before
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
-}
 
 
 # Password validation
@@ -137,12 +147,13 @@ MAILERS = {
 
 
 
-
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
-
+frontend_url = os.environ.get("FRONTEND_URL")
+if frontend_url:
+    CORS_ALLOWED_ORIGINS.append(frontend_url)
 
 
 REST_FRAMEWORK = {
