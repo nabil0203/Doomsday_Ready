@@ -5,8 +5,8 @@ from django.db.models.functions import Lower
 
 class Movie(models.Model):
     title = models.CharField(max_length=255, unique=True)
-    release_year = models.IntegerField()
-    runtime = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(300)],)
+    release_year = models.IntegerField(validators=[MinValueValidator(2000), MaxValueValidator(2050)])
+    runtime = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(300)])
     watched = models.BooleanField(default=False)
     prerequisites = models.ManyToManyField(
         "self",
