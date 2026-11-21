@@ -7,6 +7,18 @@ A small full-stack app that helps MCU fans plan their rewatch before *Avengers: 
 - **Feature 1:** movies with prerequisites, circular-dependency protection, and a rewatch order
 - **Feature 2:** cinemas with seat bundles, and a booking quote (fewest bundles for an exact group size)
 
+
+
+## Live demo
+
+- App: https://doomsday-ready-2770.onrender.com/
+- API: https://doomsday-ready-j5y7.onrender.com/api/movies
+
+The demo runs on Render's free plan, so two things to know:
+
+- The backend goes to sleep after 15 minutes without traffic. The first request after a quiet period can take about a minute, and may fail once. Refresh and it works.
+- The free Postgres database expires 30 days after it was created (on or around DD Month YYYY), after which the live demo will stop working. The code and the local setup below are unaffected.
+
 ## Project layout
 
 ```
@@ -39,6 +51,7 @@ cd backend
 python -m venv my_env
 source my_env/Scripts/activate        # Windows (Git Bash). On Mac/Linux: source my_env/bin/activate
 pip install -r requirements.txt
+cp .env.example .env
 python manage.py migrate
 python manage.py runserver
 ```
